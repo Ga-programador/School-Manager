@@ -1,0 +1,57 @@
+/* Overlay escuro de fundo */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 9999;
+    justify-content: flex-end;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+/* Modal no canto direito (Drawer) */
+.modal-drawer {
+    background: #ffffff;
+    width: 440px;
+    height: 100%;
+    padding: 32px 28px;
+    box-shadow: -10px 0 25px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: slideIn 0.25s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+/* Form de inputs */
+.modal-drawer .form-group {
+    margin-bottom: 16px;
+}
+
+.modal-drawer label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.modal-drawer input, .modal-drawer select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    font-size: 14px;
+}

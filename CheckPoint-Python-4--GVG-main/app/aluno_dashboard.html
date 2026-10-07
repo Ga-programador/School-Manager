@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visão Geral do Aluno - SchoolManager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { min-height: 100vh; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar a { color: #64748b; text-decoration: none; padding: 12px 20px; display: block; border-radius: 8px; margin-bottom: 4px; font-weight: 500; }
+        .sidebar a:hover, .sidebar a.active { background: #0052cc; color: white !important; }
+        .sidebar a.btn-logout { color: #dc2626; border: 1px solid #fee2e2; background-color: #fef2f2; }
+        .sidebar a.btn-logout:hover { background-color: #dc2626; color: white !important; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .metric-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar / Menu Lateral do Aluno -->
+            <div class="col-md-2 sidebar p-3">
+                <div>
+                    <div class="d-flex align-items-center mb-4 ps-2">
+                        <i class="bi bi-person-workspace text-primary fs-3 me-2"></i>
+                        <div>
+                            <h5 class="fw-bold mb-0 text-dark">Portal Aluno</h5>
+                            <small class="text-muted">Área do Estudante</small>
+                        </div>
+                    </div>
+                    <!-- Menu lateral com rotas corrigidas -->
+                    <a href="/aluno-dashboard" class="active"><i class="bi bi-grid-1x2-fill me-2"></i>Visão Geral</a>
+                    <a href="/aluno-notas"><i class="bi bi-journal-text me-2"></i>Meu Boletim</a>
+                    <a href="/aluno-frequencia"><i class="bi bi-calendar-check me-2"></i>Minha Frequência</a>
+                    <a href="/aluno-pareceres"><i class="bi bi-robot me-2"></i>Pareceres Pedagógicos</a>
+                </div>
+
+                <!-- Botão Sair na Parte Inferior do Menu -->
+                <div class="pt-3 border-top">
+                    <a href="#" onclick="encerrarSessao()" class="btn-logout text-center fw-bold">
+                        <i class="bi bi-box-arrow-right me-2"></i>Sair
+                    </a>
+                </div>
+            </div>
+
+            <!-- Conteúdo Principal -->
+            <div class="col-md-10 p-4">
+                
+                <!-- Barra Superior de Identificação -->
+                <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded shadow-sm border">
+                    <div>
+                        <h2 class="fw-bold mb-0 text-dark">Painel do Estudante</h2>
+                        <p class="text-muted mb-0 small">Acompanhe seu desempenho acadêmico, notas e avisos importantes.</p>
+                    </div>
+                    <div class="badge bg-light text-dark p-2 border fs-6 fw-normal">
+                        <i class="bi bi-person-circle text-primary me-1"></i> 
+                        <span id="identificacao-usuario" class="fw-bold">Aluno / Carregando...</span>
+                    </div>
+                </div>
+
+                <!-- Cards de Indicadores do Aluno -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="metric-icon bg-primary-subtle text-primary me-3">
+                                    <i class="bi bi-award-fill"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Média Geral</small>
+                                    <h4 class="fw-bold mb-0 text-dark" id="aluno-media">8.5</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="metric-icon bg-success-subtle text-success me-3">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Frequência Global</small>
+                                    <h4 class="fw-bold mb-0 text-dark" id="aluno-frequencia">92%</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="metric-icon bg-warning-subtle text-warning me-3">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Status Acadêmico</small>
+                                    <h5 class="fw-bold mb-0 text-dark" id="aluno-status">Regular</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="metric-icon bg-info-subtle text-info me-3">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Turma Atual</small>
+                                    <h5 class="fw-bold mb-0 text-dark" id="aluno-turma">Turma A1</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção Principal: Resumo do Boletim e Últimos Avisos -->
+                <div class="row g-4">
+                    <!-- Resumo das Disciplinas -->
+                    <div class="col-md-8">
+                        <div class="card p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold text-dark mb-0">Resumo de Desempenho por Disciplina</h5>
+                                <a href="/aluno-notas" class="btn btn-sm btn-outline-primary fw-bold">Ver Boletim Completo</a>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Disciplina</th>
+                                            <th>Média Parcial</th>
+                                            <th>Frequência</th>
+                                            <th>Situação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabela-resumo-disciplinas">
+                                        <tr>
+                                            <td class="fw-semibold">Matemática</td>
+                                            <td>8.0</td>
+                                            <td>94%</td>
+                                            <td><span class="badge bg-success-subtle text-success">Aprovado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Língua Portuguesa</td>
+                                            <td>8.5</td>
+                                            <td>96%</td>
+                                            <td><span class="badge bg-success-subtle text-success">Aprovado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">História</td>
+                                            <td>9.0</td>
+                                            <td>90%</td>
+                                            <td><span class="badge bg-success-subtle text-success">Aprovado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Física</td>
+                                            <td>6.5</td>
+                                            <td>82%</td>
+                                            <td><span class="badge bg-warning-subtle text-warning">Atenção</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Avisos / Parecer Recente -->
+                    <div class="col-md-4">
+                        <div class="card p-4 mb-4">
+                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-robot text-primary me-2"></i>Parecer Recente</h5>
+                            <p class="text-muted small mb-3" id="resumo-parecer">
+                                "O aluno demonstra excelente assiduidade e alto engajamento em sala de aula, apresentando ótimo progresso geral."
+                            </p>
+                            <a href="/aluno-pareceres" class="btn btn-sm btn-light border w-100 fw-bold text-dark">
+                                Ver Parecer Completo
+                            </a>
+                        </div>
+
+                        <div class="card p-4">
+                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-bell-fill text-warning me-2"></i>Mural de Avisos</h5>
+                            <div class="border-start border-3 border-primary ps-3 mb-3">
+                                <small class="text-muted d-block">10/Out - Próxima Avaliação</small>
+                                <strong class="d-block text-dark">Prova de Física - 2º Bimestre</strong>
+                            </div>
+                            <div class="border-start border-3 border-success ps-3">
+                                <small class="text-muted d-block">15/Out - Evento</small>
+                                <strong class="d-block text-dark">Feira de Ciências da Escola</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Dados Padrão dos Alunos para Fallback/Sessão
+        const bancoAlunosPadrao = [
+            { id: "20240001", nome: "Ana Clara Martins", turma: "Turma A1", frequencia: "96%", media: "8.8", status: "Regular", observacao: "Excelente assiduidade, demonstra alto compromisso nas atividades acadêmicas." },
+            { id: "20240002", nome: "Bruno Silva Santos", turma: "Turma A1", frequencia: "82%", media: "6.8", status: "Em Risco", observacao: "Apresenta frequência próxima do limite. Recomenda-se acompanhamento nas aulas de exatas." },
+            { id: "20240003", nome: "Gabriela Henrique Dias", turma: "Turma A1", frequencia: "90%", media: "8.2", status: "Regular", observacao: "Bom desempenho global, com frequência consistente e boa participação." }
+        ];
+
+        // Verificar e Autenticar Sessão do Aluno
+        function checarSessaoAluno() {
+            const usuario = JSON.parse(localStorage.getItem('usuario_logado'));
+            
+            let nomeAluno = "Ana Clara Martins";
+            let perfilExibicao = "Aluno";
+
+            if (usuario) {
+                nomeAluno = usuario.nome || nomeAluno;
+                perfilExibicao = usuario.perfil || perfilExibicao;
+            } else {
+                localStorage.setItem('usuario_logado', JSON.stringify({
+                    id: "20240001",
+                    nome: "Ana Clara Martins",
+                    perfil: "Aluno",
+                    turma: "Turma A1"
+                }));
+            }
+
+            const elIdentificacao = document.getElementById('identificacao-usuario');
+            if (elIdentificacao) {
+                elIdentificacao.innerText = `${perfilExibicao} / ${nomeAluno}`;
+            }
+
+            carregarDadosAluno(nomeAluno);
+        }
+
+        // Carregar Indicadores do Aluno Logado
+        function carregarDadosAluno(nomeAluno) {
+            const listaAlunos = JSON.parse(localStorage.getItem('alunos_db_v2')) || bancoAlunosPadrao;
+            const dados = listaAlunos.find(a => a.nome.toLowerCase() === nomeAluno.toLowerCase()) || bancoAlunosPadrao[0];
+
+            if (dados) {
+                document.getElementById('aluno-media').innerText = dados.media || "8.5";
+                document.getElementById('aluno-frequencia').innerText = dados.frequencia || "92%";
+                document.getElementById('aluno-status').innerText = dados.status || "Regular";
+                document.getElementById('aluno-turma').innerText = dados.turma || "Turma A1";
+
+                if (dados.observacao) {
+                    document.getElementById('resumo-parecer').innerText = `"${dados.observacao}"`;
+                }
+            }
+        }
+
+        // Encerrar Sessão
+        function encerrarSessao() {
+            localStorage.removeItem('usuario_logado');
+            window.location.href = '/login';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checarSessaoAluno();
+        });
+    </script>
+</body>
+</html>

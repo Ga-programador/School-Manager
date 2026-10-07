@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SchoolManager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { min-height: 100vh; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar a { color: #64748b; text-decoration: none; padding: 12px 20px; display: block; border-radius: 8px; margin-bottom: 4px; font-weight: 500; }
+        .sidebar a:hover, .sidebar a.active { background: #0052cc; color: white; }
+        .sidebar a.btn-logout { color: #dc2626; border: 1px solid #fee2e2; background-color: #fef2f2; }
+        .sidebar a.btn-logout:hover { background-color: #dc2626; color: white !important; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .stat-card { border-left: 4px solid #0052cc; }
+        .avatar-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-3">
+                <div>
+                    <div class="d-flex align-items-center mb-4 ps-2">
+                        <i class="bi bi-mortarboard-fill text-primary fs-3 me-2"></i>
+                        <div>
+                            <h5 class="fw-bold mb-0 text-dark">Académico</h5>
+                            <small class="text-muted">Gestão Escolar</small>
+                        </div>
+                    </div>
+                    <a href="/dashboard" class="active"><i class="bi bi-grid-1x2-fill me-2"></i>Visão Geral</a>
+                    <a href="/gestao"><i class="bi bi-people-fill me-2"></i>Gestão Académica</a>
+                    <a href="/lancamentos"><i class="bi bi-journal-check me-2"></i>Lançamentos (Notas/Freq.)</a>
+                    <a href="/ia"><i class="bi bi-robot me-2"></i>Análise de IA (LLM)</a>
+                </div>
+
+                <!-- Botão Sair na Parte Inferior do Menu -->
+                <div class="pt-3 border-top">
+                    <a href="#" onclick="encerrarSessao()" class="btn-logout text-center fw-bold">
+                        <i class="bi bi-box-arrow-right me-2"></i>Sair
+                    </a>
+                </div>
+            </div>
+
+            <!-- Conteúdo Principal -->
+            <div class="col-md-10 p-4">
+                
+                <!-- Barra Superior com Identificação do Usuário -->
+                <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded shadow-sm border">
+                    <div>
+                        <h2 class="fw-bold mb-0 text-dark">Visão Geral</h2>
+                        <p class="text-muted mb-0 small">Acompanhamento geral das turmas A1, A2 e A3</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="badge bg-light text-dark p-2 border fs-6 fw-normal">
+                            <i class="bi bi-person-circle text-primary me-1"></i> 
+                            <span id="identificacao-usuario" class="fw-bold">Professor / Rodolfo da Silva</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controlo de Filtro de Turmas -->
+                <div class="d-flex justify-content-end align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="fw-bold text-muted small">FILTRAR TURMA:</label>
+                        <select id="select-turma-dash" class="form-select w-auto bg-white" onchange="atualizarDashboard()">
+                            <option value="todas">Todas as Turmas (3 salas / 15 alunos)</option>
+                            <option value="Turma A1">Turma A1 (5 Alunos)</option>
+                            <option value="Turma A2">Turma A2 (5 Alunos)</option>
+                            <option value="Turma A3">Turma A3 (5 Alunos)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Indicadores -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card p-3 stat-card">
+                            <span class="text-muted small fw-bold">TOTAL DE ALUNOS</span>
+                            <h3 class="fw-bold my-1 text-dark" id="total-alunos">15</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card p-3 stat-card" style="border-left-color: #16a34a;">
+                            <span class="text-muted small fw-bold">MÉDIA DE FREQUÊNCIA</span>
+                            <h3 class="fw-bold my-1 text-success" id="media-frequencia">88%</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card p-3 stat-card" style="border-left-color: #eab308;">
+                            <span class="text-muted small fw-bold">ALUNOS EM RISCO/ATENÇÃO</span>
+                            <h3 class="fw-bold my-1 text-warning" id="alunos-risco">6</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card p-3 stat-card" style="border-left-color: #0284c7;">
+                            <span class="text-muted small fw-bold">TURMAS ATIVAS</span>
+                            <h3 class="fw-bold my-1 text-dark" id="turmas-ativas">3</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="card p-4">
+                            <h6 class="fw-bold mb-3 text-dark">Média de Notas por Disciplina</h6>
+                            <div style="position: relative; height: 250px;">
+                                <canvas id="chartNotas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card p-4">
+                            <h6 class="fw-bold mb-3 text-dark">Distribuição de Assiduidade</h6>
+                            <div style="position: relative; height: 250px;">
+                                <canvas id="chartFrequencia"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Alunos em Situação Crítica -->
+                <div class="card p-4">
+                    <h6 class="fw-bold mb-3 text-dark">ALUNOS EM SITUAÇÃO CRÍTICA (MENOR DESEMPENHO/FREQUÊNCIA)</h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nome do Aluno</th>
+                                    <th>Turma</th>
+                                    <th>Média de Notas</th>
+                                    <th>Frequência (%)</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-criticos">
+                                <!-- Preenchido dinamicamente pelo JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chartNotasInstance = null;
+        let chartFreqInstance = null;
+
+        const alunosBase = [
+            { id: '20240002', nome: 'Bruno Silva Santos', turma: 'Turma A1', nota: 6.5, freq: 82, bg: '#10b981', status: 'Atenção' },
+            { id: '20240004', nome: 'Lucas Rodrigues Lima', turma: 'Turma A1', nota: 6.0, freq: 78, bg: '#0284c7', status: 'Atenção' },
+            { id: '20240007', nome: 'Daniel Pereira Lima', turma: 'Turma A2', nota: 6.2, freq: 82, bg: '#0284c7', status: 'Atenção' },
+            { id: '20240009', nome: 'Juliana Barbosa Gomes', turma: 'Turma A2', nota: 6.0, freq: 78, bg: '#10b981', status: 'Atenção' },
+            { id: '20240012', nome: 'Felipe Gonçalves Rocha', turma: 'Turma A3', nota: 6.4, freq: 82, bg: '#0284c7', status: 'Atenção' },
+            { id: '20240014', nome: 'Rodrigo Almeida Nunes', turma: 'Turma A3', nota: 5.8, freq: 78, bg: '#dc2626', status: 'Recuperação' }
+        ];
+
+        const dadosTurmas = {
+            'todas': { total: 15, freq: '88%', risco: 6, notas: [7.8, 8.4, 7.2, 8.9, 7.6], freqData: [9, 6, 0] },
+            'Turma A1': { total: 5, freq: '87%', risco: 2, notas: [8.5, 8.8, 8.0, 9.2, 8.7], freqData: [3, 2, 0] },
+            'Turma A2': { total: 5, freq: '87%', risco: 2, notas: [7.2, 7.9, 6.8, 8.4, 7.1], freqData: [3, 2, 0] },
+            'Turma A3': { total: 5, freq: '87%', risco: 2, notas: [7.6, 8.5, 6.9, 9.0, 7.0], freqData: [3, 2, 0] }
+        };
+
+        // Função para verificar se a sessão do usuário existe e atualizar identificação
+        function checarSessao() {
+            const usuario = JSON.parse(localStorage.getItem('usuario_logado'));
+            if (!usuario) {
+                window.location.href = '/login';
+                return;
+            }
+            const elIdentificacao = document.getElementById('identificacao-usuario');
+            if (elIdentificacao) {
+                elIdentificacao.innerText = `${usuario.perfil} / ${usuario.nome}`;
+            }
+        }
+
+        // Função de Logout
+        function encerrarSessao() {
+            localStorage.removeItem('usuario_logado');
+            window.location.href = '/login';
+        }
+
+        function atualizarDashboard() {
+            const turma = document.getElementById('select-turma-dash').value;
+            const data = dadosTurmas[turma];
+
+            document.getElementById('total-alunos').innerText = data.total;
+            document.getElementById('media-frequencia').innerText = data.freq;
+            document.getElementById('alunos-risco').innerText = data.risco;
+
+            // Renderizar Tabela de Alunos Críticos
+            const tbody = document.getElementById('tabela-criticos');
+            tbody.innerHTML = '';
+            
+            const filtrados = turma === 'todas' ? alunosBase : alunosBase.filter(a => a.turma === turma);
+            
+            filtrados.forEach(aluno => {
+                const init = aluno.nome.split(' ').map(n => n[0]).slice(0,2).join('');
+                const statusBadge = aluno.status === 'Atenção' ? 
+                    '<span class="badge bg-warning text-dark">Atenção</span>' : 
+                    '<span class="badge bg-danger">Recuperação</span>';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle" style="background-color: ${aluno.bg}">${init}</div>
+                                <span class="fw-bold">${aluno.nome}</span>
+                            </div>
+                        </td>
+                        <td>${aluno.turma}</td>
+                        <td>${aluno.nota.toFixed(1)}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold" style="min-width: 45px;">${aluno.freq}.0%</span>
+                                <div class="progress w-100" style="height: 6px;">
+                                    <div class="progress-bar ${aluno.freq < 80 ? 'bg-warning' : 'bg-success'}" style="width: ${aluno.freq}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <a href="/ia" class="btn btn-sm btn-primary rounded-pill"><i class="bi bi-stars me-1"></i>Gerar Parecer IA</a>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Gráficos
+            if (chartNotasInstance) chartNotasInstance.destroy();
+            if (chartFreqInstance) chartFreqInstance.destroy();
+
+            chartNotasInstance = new Chart(document.getElementById('chartNotas'), {
+                type: 'bar',
+                data: {
+                    labels: ['Matemática', 'História', 'Português', 'Ciências', 'Geografia'],
+                    datasets: [{ label: 'Média', data: data.notas, backgroundColor: '#0052cc', borderRadius: 6 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            chartFreqInstance = new Chart(document.getElementById('chartFrequencia'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Frequência Normal (>85%)', 'Atenção (75%-85%)', 'Risco Crítico (<75%)'],
+                    datasets: [{ data: data.freqData, backgroundColor: ['#16a34a', '#eab308', '#dc2626'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checarSessao();
+            atualizarDashboard();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+sqlalchemy==2.0.35
+pydantic[email]==2.9.2
+python-dotenv==1.0.1
+# Só é necessário instalar se for conectar no Oracle (veja README):
+# oracledb==2.4.1
