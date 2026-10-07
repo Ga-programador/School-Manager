@@ -1,0 +1,8 @@
+[
+  "CheckPoint-Python-4--GVG-main/app/test_main.py::test_read_dashboard",
+  "CheckPoint-Python-4--GVG-main/app/test_main.py::test_read_login",
+  "CheckPoint-Python-4--GVG-main/teste/test_main.py::test_dashboard_metricas_autorizado",
+  "CheckPoint-Python-4--GVG-main/teste/test_main.py::test_dashboard_metricas_negado",
+  "CheckPoint-Python-4--GVG-main/teste/test_main.py::test_read_dashboard",
+  "CheckPoint-Python-4--GVG-main/teste/test_main.py::test_read_login"
+]
